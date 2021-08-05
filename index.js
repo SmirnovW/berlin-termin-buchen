@@ -7,11 +7,12 @@ const app = new express();
 
 const TOKEN = process.env.TOKEN;
 
-axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
+//axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
 
 app.get('/', (req, res) => {
-    res.send('hello world');
+    res.send(TOKEN);
 });
+/*
 
 app.post('/bot', (req, res) => {
     const { message } = req.body;
@@ -25,6 +26,7 @@ app.post('/bot', (req, res) => {
             }
         );
 });
+*/
 
 app.listen(443, function() {
     console.log("Telegram app listening on port 3000!")
