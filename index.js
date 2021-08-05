@@ -10,7 +10,7 @@ const TOKEN = process.env.TOKEN;
 axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
 
 app.get('/', (req, res) => {
-    res.end('test');
+    res.send('hello world');
 });
 
 app.post('/bot', (req, res) => {
