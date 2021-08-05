@@ -1,0 +1,7 @@
+{
+  "name": "termin",
+  "version": "1.0.0",
+  "description": "Book termin",
+  "main": "index.js",
+  "license": "MIT"
+}
