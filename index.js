@@ -39,49 +39,46 @@ app.post('/bot', (req, res) => {
         });
 });
 
-/*setInterval(() => {
-}, 60000);*/
+setInterval(() => {
     axios({
         url: 'https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
         method: 'get',
         maxRedirects: 0,
     })
-        .catch(response => {
-            console.log(response.response.status);
-            if (response.response.status === 302) {
-                return axios({
-                    url: 'https://service.berlin.de/terminvereinbarung/termin/day/',
-                    method: 'get',
-                    headers: {
-                        cookie: response.response.headers['set-cookie'][0].split(';')[0]
+    .catch(response => {
+        if (response.response.status === 302) {
+            return axios({
+                url: 'https://service.berlin.de/terminvereinbarung/termin/day/',
+                method: 'get',
+                headers: {
+                    cookie: response.response.headers['set-cookie'][0].split(';')[0]
+                }
+            });
+        }
+        return null;
+    })
+    .then(response => {
+        if (response != null) {
+            const regex = /[^t]\s?(buchbar)/gm;
+            let res = [...response.data.matchAll(regex)];
+            if (res.length >= 1) {
+                axios
+                .post(
+                    `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+                    {
+                        chat_id: 180833698,
+                        text: 'There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
                     }
+                ).then((response) => {
+                    // We get here if the message was successfully posted
+                    console.log("Message posted")
+                    res.end("ok")
                 });
             }
-            return null;
-        })
-        .then(response => {
-            if (response != null) {
-                const regex = /[^t]\s?(buchbar)/gm;
-                let res = [...response.data.matchAll(regex)];
-                if (res.length > 1) {
-                    console.log('FOUND');
-                } else {
-                    axios
-                        .post(
-                            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-                            {
-                                chat_id: 180833698,
-                                text: 'No free dates 😭',
-                            }
-                        ).then((response) => {
-                            // We get here if the message was successfully posted
-                            console.log("Message posted")
-                            res.end("ok")
-                        });
-                }
-            }
-        });
+        }
+    });
+}, 5 * 60000);
 
 app.listen(process.env.PORT || 3000, function() {
-    console.log("Telegram app listening on port 3000!")
+    console.log("Telegram app running")
 });
