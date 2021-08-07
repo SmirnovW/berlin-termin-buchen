@@ -16,7 +16,7 @@ app.use(
 ); // for parsing application/x-www-form-urlencoded
 
 
-axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
+axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen.netlify.app/bot`);
 
 app.get('/', (req, res) => {
     res.send(TOKEN);
