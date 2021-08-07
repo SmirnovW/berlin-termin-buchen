@@ -61,7 +61,7 @@ setInterval(() => {
         if (response != null) {
             const regex = /[^t]\s?(buchbar)/gm;
             let res = [...response.data.matchAll(regex)];
-            if (res.length >= 1) {
+            if (res.length > 1) {
                 axios
                 .post(
                     `https://api.telegram.org/bot${TOKEN}/sendMessage`,
