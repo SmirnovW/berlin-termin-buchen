@@ -66,17 +66,7 @@ app.post('/bot', (req, res) => {
                 if (res.length > 1) {
                     console.log('FOUND');
                 } else {
-                    axios
-                        .post(
-                            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-                            {
-                                text: 'No free dates 😭',
-                            }
-                        ).then((response) => {
-                            // We get here if the message was successfully posted
-                            console.log("Message posted")
-                            res.end("ok")
-                        });
+                    console.log('NOT FOUND');
                 }
             }
         });
