@@ -39,7 +39,7 @@ function checkTermin(command = null) {
                 }
             });
         } else {
-            sendMessage(`Something wen wrong: ${response.response.status}`)
+            sendMessage(`Something went wrong: ${response.response.status}`)
         }
         return null;
     })
@@ -58,7 +58,7 @@ function checkTermin(command = null) {
         }
     })
     .catch(error => {
-        sendMessage(`Something wen wrong: ${error.message}`)
+        sendMessage(`Something went wrong: ${error.message}`)
     });
 }
 
@@ -81,6 +81,7 @@ app.post('/bot', (req, res) => {
 
     if (message.text.toLowerCase() === 'ping') {
         checkTermin(message.text);
+        res.end();
     }
 });
 
