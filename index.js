@@ -48,6 +48,7 @@ function checkTermin(command = null) {
         if (response != null) {
             const regex = /[^t]\s?(buchbar)/gm;
             let res = [...response.data.matchAll(regex)];
+            console.log('res', res);
             if (res.length > 1) {
                 sendMessage('There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686');
             } else {
