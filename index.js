@@ -79,7 +79,7 @@ app.get('/', (req, res) => {
 app.post('/bot', (req, res) => {
     const { message } = req.body;
 
-    if (message.text.toLowerCase() === 'ping') {
+    if (message && message.text.toLowerCase() === 'ping') {
         checkTermin(message.text)
         .then(() => {
             res.end();
