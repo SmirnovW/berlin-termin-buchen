@@ -84,6 +84,8 @@ app.post('/bot', (req, res) => {
         .then(() => {
             res.end();
         });
+    } else {
+        res.end('unknown command or strange bot message');
     }
 });
 
