@@ -23,7 +23,7 @@ function sendMessage(message) {
 }
 
 function checkTermin(command = null) {
-    axios({
+    return axios({
         url: 'https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
         method: 'get',
         maxRedirects: 0,
@@ -80,8 +80,10 @@ app.post('/bot', (req, res) => {
     const { message } = req.body;
 
     if (message.text.toLowerCase() === 'ping') {
-        checkTermin(message.text);
-        res.end();
+        checkTermin(message.text)
+        .then(() => {
+            res.end();
+        });
     }
 });
 
