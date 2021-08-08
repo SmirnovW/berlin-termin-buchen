@@ -15,6 +15,7 @@ function checkTermin(command = null) {
         maxRedirects: 0,
     })
     .catch(response => {
+//        console.log('response', response);
         if (response.response.status === 302) {
             return axios({
                 url: 'https://service.berlin.de/terminvereinbarung/termin/day/',
@@ -27,6 +28,7 @@ function checkTermin(command = null) {
         return null;
     })
     .then(response => {
+        //console.log('response 2', response);
         if (response != null) {
             const regex = /[^t]\s?(buchbar)/gm;
             let res = [...response.data.matchAll(regex)];
@@ -83,24 +85,24 @@ app.post('/bot', (req, res) => {
     if (message.text === 'Ping') {
         checkTermin();
     }
-/*
     axios
         .post(
             `https://api.telegram.org/bot${TOKEN}/sendMessage`,
             {
                 chat_id: message.chat.id,
-                text: message,
+                text: message.text,
             }
         ).then((response) => {
             // We get here if the message was successfully posted
             console.log("Message posted")
             res.end("ok")
-        });*/
+        });
 });
 
 
 
-setInterval(checkTermin, 5 * 60000);
+//setInterval(checkTermin, 5 * 60000);
+checkTermin();
 
 app.listen(process.env.PORT || 3000, function() {
     console.log("Telegram app running")
