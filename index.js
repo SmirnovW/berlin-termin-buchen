@@ -8,6 +8,21 @@ const TOKEN = process.env.TOKEN;
 
 const app = new express();
 
+function sendMessage(message) {
+    axios
+    .post(
+        `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+        {
+            chat_id: 180833698,
+            text: message,
+        }
+    ).then((response) => {
+        // We get here if the message was successfully posted
+        console.log("Message posted")
+        res.end("ok")
+    });
+}
+
 function checkTermin(command = null) {
     axios({
         url: 'https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
@@ -24,6 +39,8 @@ function checkTermin(command = null) {
                     cookie: response.response.headers['set-cookie'][0].split(';')[0]
                 }
             });
+        } else {
+            sendMessage(`Something wen wrong: ${response.response.status}`)
         }
         return null;
     })
@@ -33,35 +50,16 @@ function checkTermin(command = null) {
             const regex = /[^t]\s?(buchbar)/gm;
             let res = [...response.data.matchAll(regex)];
             if (res.length > 1) {
-                axios
-                    .post(
-                        `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-                        {
-                            chat_id: 180833698,
-                            text: 'There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
-                        }
-                    ).then((response) => {
-                        // We get here if the message was successfully posted
-                        console.log("Message posted")
-                        res.end("ok")
-                    });
+                sendMessage('There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686');
             } else {
                 if (command != null) {
-                    axios
-                    .post(
-                        `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-                        {
-                            chat_id: 180833698,
-                            text: 'No termins 😭',
-                        }
-                    ).then((response) => {
-                        // We get here if the message was successfully posted
-                        console.log("Message posted")
-                        res.end("ok")
-                    });
+                    sendMessage('No termins 😭');
                 }
             }
         }
+    })
+    .catch(error => {
+        sendMessage(`Something wen wrong: ${error.message}`)
     });
 }
 
@@ -82,21 +80,9 @@ app.get('/', (req, res) => {
 app.post('/bot', (req, res) => {
     const { message } = req.body;
 
-    if (message.text === 'Ping') {
+    if (message.text.toLowerCase() === 'ping') {
         checkTermin(message.text);
     }
-    axios
-        .post(
-            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-            {
-                chat_id: message.chat.id,
-                text: message.text,
-            }
-        ).then((response) => {
-            // We get here if the message was successfully posted
-            console.log("Message posted")
-            res.end("ok")
-        });
 });
 
 
