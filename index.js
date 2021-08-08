@@ -83,7 +83,7 @@ app.post('/bot', (req, res) => {
     const { message } = req.body;
 
     if (message.text === 'Ping') {
-        checkTermin();
+        checkTermin(message.text);
     }
     axios
         .post(
