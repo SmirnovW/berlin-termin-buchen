@@ -8,38 +8,7 @@ const TOKEN = process.env.TOKEN;
 
 const app = new express();
 
-app.use(bodyParser.json()) // for parsing application/json
-app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
-); // for parsing application/x-www-form-urlencoded
-
-
-axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
-
-app.get('/', (req, res) => {
-    res.send('home');
-});
-
-app.post('/bot', (req, res) => {
-    const { message } = req.body;
-
-    axios
-        .post(
-            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-            {
-                chat_id: message.chat.id,
-                text: message,
-            }
-        ).then((response) => {
-            // We get here if the message was successfully posted
-            console.log("Message posted")
-            res.end("ok")
-        });
-});
-
-setInterval(() => {
+function checkTermin(command = null) {
     axios({
         url: 'https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
         method: 'get',
@@ -63,21 +32,75 @@ setInterval(() => {
             let res = [...response.data.matchAll(regex)];
             if (res.length > 1) {
                 axios
-                .post(
-                    `https://api.telegram.org/bot${TOKEN}/sendMessage`,
-                    {
-                        chat_id: 180833698,
-                        text: 'There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
-                    }
-                ).then((response) => {
-                    // We get here if the message was successfully posted
-                    console.log("Message posted")
-                    res.end("ok")
-                });
+                    .post(
+                        `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+                        {
+                            chat_id: 180833698,
+                            text: 'There is a free date https://service.berlin.de/terminvereinbarung/termin/tag.php?dienstleister=122251&herkunft=http%3A%2F%2Fservice.berlin.de%2Fstandort%2F122251%2F&termin=1&anliegen%5B%5D=120686',
+                        }
+                    ).then((response) => {
+                        // We get here if the message was successfully posted
+                        console.log("Message posted")
+                        res.end("ok")
+                    });
+            } else {
+                if (command != null) {
+                    axios
+                    .post(
+                        `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+                        {
+                            chat_id: 180833698,
+                            text: 'No termins 😭',
+                        }
+                    ).then((response) => {
+                        // We get here if the message was successfully posted
+                        console.log("Message posted")
+                        res.end("ok")
+                    });
+                }
             }
         }
     });
-}, 5 * 60000);
+}
+
+app.use(bodyParser.json()) // for parsing application/json
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+); // for parsing application/x-www-form-urlencoded
+
+
+axios.get(`https://api.telegram.org/bot${TOKEN}/setWebhook?url=https://berlin-termin-buchen-bot.herokuapp.com/bot`);
+
+app.get('/', (req, res) => {
+    res.send('home');
+});
+
+app.post('/bot', (req, res) => {
+    const { message } = req.body;
+
+    if (message.text === 'Ping') {
+        checkTermin();
+    }
+/*
+    axios
+        .post(
+            `https://api.telegram.org/bot${TOKEN}/sendMessage`,
+            {
+                chat_id: message.chat.id,
+                text: message,
+            }
+        ).then((response) => {
+            // We get here if the message was successfully posted
+            console.log("Message posted")
+            res.end("ok")
+        });*/
+});
+
+
+
+setInterval(checkTermin, 5 * 60000);
 
 app.listen(process.env.PORT || 3000, function() {
     console.log("Telegram app running")
