@@ -95,8 +95,8 @@ app.post('/bot', (req, res) => {
 
 
 
-//setInterval(checkTermin, 5 * 60000);
-checkTermin();
+setInterval(checkTermin, 5 * 60000);
+//checkTermin();
 
 app.listen(process.env.PORT || 3000, function() {
     console.log("Telegram app running")
